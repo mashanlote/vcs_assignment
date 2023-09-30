@@ -23,4 +23,6 @@ dependencies {
     implementation("org.projectlombok:lombok:1.18.28")
     compileOnly("org.projectlombok:lombok:1.18.28")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
+    implementation("org.springframework.boot:spring-boot-starter-web:3.1.4")
+
 }
