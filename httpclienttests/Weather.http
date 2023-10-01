@@ -1,0 +1,69 @@
+### Should return an empty list
+GET http://localhost:8080/api/weather/cities
+Accept: application/json
+
+### Returns the UUID of the created Weather instance
+POST http://localhost:8080/api/weather/cities
+Content-Type: application/json
+
+{"regionName":  "Tomsk", "temperature": 4}
+
+> {%
+client.global.set("regionId", response.body.regionId)
+ %}
+
+### Get the weather instance by UUID we received in the previous POST request
+GET http://localhost:8080/api/weather/cities/{{regionId}}
+Accept: application/json
+
+### Get a 409 when trying to add the same city again (even with a different temperature)
+POST http://localhost:8080/api/weather/cities
+Content-Type: application/json
+
+{"regionName":  "Tomsk", "temperature": 5}
+
+### Make sure there is only one city in the list of cities
+GET http://localhost:8080/api/weather/cities
+Accept: application/json
+
+### Get a 400 by providing a regionId that does not conform to UUID
+GET http://localhost:8080/api/weather/cities/invalidRegionId
+Accept: application/json
+
+### Get a 404 by providing a regionId that does not exist
+GET http://localhost:8080/api/weather/cities/b00c916f-856e-4a44-b208-bc165a85d50a
+Accept: application/json
+
+### Add a new city, do not save it in a global variable
+POST http://localhost:8080/api/weather/cities
+Content-Type: application/json
+
+{"regionName":  "Moscow", "temperature": 10}
+
+### Make sure that list now contains two cities
+GET http://localhost:8080/api/weather/cities
+Accept: application/json
+
+### Update the first city
+PUT http://localhost:8080/api/weather/cities/{{regionId}}
+Content-Type: application/json
+
+{"temperature": 20}
+
+### Make sure the temperature was updated
+GET http://localhost:8080/api/weather/cities/{{regionId}}
+Accept: application/json
+
+### Delete the city
+DELETE http://localhost:8080/api/weather/cities/{{regionId}}
+Content-Type: application/json
+
+### Make sure it is no longer accessible
+GET http://localhost:8080/api/weather/cities/{{regionId}}
+Accept: application/json
+
+### Make sure there is only one city in the list
+GET http://localhost:8080/api/weather/cities
+Accept: application/json
+
+

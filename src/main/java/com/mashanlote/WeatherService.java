@@ -2,7 +2,7 @@ package com.mashanlote;
 
 import com.mashanlote.exceptions.ConflictException;
 import com.mashanlote.exceptions.NotFoundException;
-import com.mashanlote.model.RegionNew;
+import com.mashanlote.model.CreateRegionRequest;
 import com.mashanlote.model.Weather;
 import com.mashanlote.model.WeatherUpdate;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class WeatherService {
         return weather;
     }
 
-    public UUID addNewRegion(RegionNew region) {
+    public UUID addNewRegion(CreateRegionRequest region) {
         if (regionNameToRegionIdMap.containsKey(region.regionName())) throw new ConflictException();
         LocalDateTime dateTime = LocalDateTime.now();
         UUID regionId = UUID.randomUUID();

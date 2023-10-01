@@ -1,6 +1,6 @@
 package com.mashanlote;
 
-import com.mashanlote.model.RegionNew;
+import com.mashanlote.model.CreateRegionRequest;
 import com.mashanlote.model.Weather;
 import com.mashanlote.model.WeatherUpdate;
 import org.springframework.http.HttpStatus;
@@ -8,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
-@RestController("/api/weather/cities")
+@RestController()
+@RequestMapping("/api/weather/cities")
 public class WeatherController {
 
     WeatherService weatherService;
@@ -34,10 +36,10 @@ public class WeatherController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> addCity(@RequestBody RegionNew region) {
-        var weather = weatherService.addNewRegion(region);
-        // TODO: return UUID of the added city
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<?> addCity(@RequestBody CreateRegionRequest region) {
+        var regionId = weatherService.addNewRegion(region);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("regionId", regionId));
     }
 
     @DeleteMapping("/{regionId}")
@@ -46,6 +48,8 @@ public class WeatherController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    // В моём случае put mapping не позволяет создать новый объект с погодой, потому что
+    // принимает regionId уже существующего региона.
     @PutMapping("/{regionId}")
     public ResponseEntity<?> updateCity(@PathVariable UUID regionId, @RequestBody WeatherUpdate weatherUpdate) {
         weatherService.updateWeatherData(regionId, weatherUpdate);
