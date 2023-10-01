@@ -1,4 +1,4 @@
-package com.mashanlote.exceptions;
+package com.mashanlote.model.exceptions;
 
 public class BadRequestException extends RuntimeException {
 

@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("org.springframework.boot") version "3.1.4"
 }
 
 group = "com.mashanlote"
@@ -9,7 +10,7 @@ repositories {
 }
 
 tasks.jar {
-    manifest.attributes["Main-Class"] = "Weather"
+    manifest.attributes["Main-Class"] = "com.mashanlote.WeatherApplication"
     val dependencies = configurations
             .runtimeClasspath
             .get()
@@ -24,5 +25,5 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.28")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
     implementation("org.springframework.boot:spring-boot-starter-web:3.1.4")
-
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 }

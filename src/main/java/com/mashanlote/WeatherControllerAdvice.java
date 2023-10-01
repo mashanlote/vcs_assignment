@@ -1,12 +1,16 @@
 package com.mashanlote;
 
-import com.mashanlote.exceptions.BadRequestException;
-import com.mashanlote.exceptions.ConflictException;
-import com.mashanlote.exceptions.NotFoundException;
+import com.mashanlote.model.exceptions.BadRequestException;
+import com.mashanlote.model.exceptions.ConflictException;
+import com.mashanlote.model.exceptions.NotFoundException;
 import com.mashanlote.model.ErrorDetails;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice

@@ -1,7 +1,7 @@
 package com.mashanlote;
 
-import com.mashanlote.exceptions.ConflictException;
-import com.mashanlote.exceptions.NotFoundException;
+import com.mashanlote.model.exceptions.ConflictException;
+import com.mashanlote.model.exceptions.NotFoundException;
 import com.mashanlote.model.CreateRegionRequest;
 import com.mashanlote.model.Weather;
 import com.mashanlote.model.WeatherUpdate;
