@@ -3,6 +3,7 @@ package com.mashanlote.configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashanlote.WeatherApiErrorHandler;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -19,9 +20,10 @@ public class WeatherApiClientConfiguration {
     @Bean
     @Qualifier("weather")
     RestTemplate restTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(new WeatherApiErrorHandler(mapper));
-        return restTemplate;
+        return new RestTemplateBuilder()
+                .rootUri("https://api.weatherapi.com/v1/")
+                .errorHandler(new WeatherApiErrorHandler(mapper))
+                .build();
     }
 
 }

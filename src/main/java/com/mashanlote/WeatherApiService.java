@@ -1,30 +1,31 @@
 package com.mashanlote;
 
 import com.mashanlote.model.WeatherPOJO;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URL;
 
 @Service
 public class WeatherApiService {
 
-    final private String URL = "https://api.weatherapi.com/v1/current.json" +
-            "?key=" + System.getenv("API_KEY") +
-            "&q=";
+    private final String URL;
 
     @Qualifier("weather")
     RestTemplate weatherApi;
 
-    public WeatherApiService(RestTemplate weatherApi) {
+    public WeatherApiService(
+            RestTemplate weatherApi,
+            @Value("${api-key}") String apiKey
+    ) {
         this.weatherApi = weatherApi;
+        URL = "/current.json?key=" + apiKey + "&q={city}";
     }
 
+    @RateLimiter(name = "api")
     public WeatherPOJO getCityWeather(String city) {
-        WeatherPOJO weather = weatherApi
-                .getForObject(URL + city, WeatherPOJO.class);
-        return weather;
+        return weatherApi.getForObject(URL, WeatherPOJO.class, city);
     }
+
 }

@@ -1,9 +1,8 @@
 package com.mashanlote;
 
-import com.mashanlote.model.exceptions.BadRequestException;
-import com.mashanlote.model.exceptions.ConflictException;
-import com.mashanlote.model.exceptions.NotFoundException;
+import com.mashanlote.model.exceptions.*;
 import com.mashanlote.model.ErrorDetails;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.format.DateTimeParseException;
 
 @RestControllerAdvice
 public class WeatherControllerAdvice {
@@ -32,6 +33,22 @@ public class WeatherControllerAdvice {
     public ResponseEntity<ErrorDetails> handleConflict() {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorDetails("409", "There was a conflict adding a new resource."));
+    }
+
+    @ExceptionHandler({
+            AuthorizationException.class,
+            AuthenticationException.class,
+            DateTimeParseException.class
+    })
+    public ResponseEntity<ErrorDetails> handleAuthOrInternal() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorDetails("500", "The server encountered an error while fetching the data."));
+    }
+
+    @ExceptionHandler({RequestNotPermitted.class})
+    public ResponseEntity<ErrorDetails> handleTooManyRequests() {
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(new ErrorDetails("429", "Quit spamming our API."));
     }
 
 }

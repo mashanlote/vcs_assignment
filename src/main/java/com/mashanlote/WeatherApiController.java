@@ -1,5 +1,6 @@
 package com.mashanlote;
 
+import com.mashanlote.model.WeatherPOJO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,9 +18,10 @@ public class WeatherApiController {
     }
 
     @GetMapping("/{city}")
-    public ResponseEntity<?> getCityWeather(@PathVariable String city) {
+    public ResponseEntity<WeatherPOJO> getCityWeather(@PathVariable String city) {
         var weather = weatherService.getCityWeather(city);
         return ResponseEntity.ok(weather);
     }
+
 
 }
