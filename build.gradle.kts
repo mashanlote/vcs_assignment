@@ -26,4 +26,8 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.28")
     implementation("org.springframework.boot:spring-boot-starter-web:3.1.4")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
+    implementation("io.github.resilience4j:resilience4j-spring-boot3:2.0.2")
+    implementation("io.github.resilience4j:resilience4j-ratelimiter:2.0.2")
+    implementation("org.springframework.boot:spring-boot-starter-aop:3.1.2")
 }
