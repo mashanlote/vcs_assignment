@@ -1,3 +1,3 @@
-package com.mashanlote.model;
+package com.mashanlote.model.weather;
 
 public record WeatherUpdate(int temperature) { }

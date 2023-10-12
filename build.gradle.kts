@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("org.springframework.boot") version "3.1.4"
+    id("org.liquibase.gradle") version "2.2.0"
 }
 
 group = "com.mashanlote"
@@ -30,4 +31,6 @@ dependencies {
     implementation("io.github.resilience4j:resilience4j-spring-boot3:2.0.2")
     implementation("io.github.resilience4j:resilience4j-ratelimiter:2.0.2")
     implementation("org.springframework.boot:spring-boot-starter-aop:3.1.2")
+    runtimeOnly("com.h2database:h2:2.2.224")
+    liquibaseRuntime("org.liquibase:liquibase-core:4.24.0")
 }

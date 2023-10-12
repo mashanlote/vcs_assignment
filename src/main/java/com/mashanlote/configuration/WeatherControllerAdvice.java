@@ -1,15 +1,11 @@
-package com.mashanlote;
+package com.mashanlote.configuration;
 
 import com.mashanlote.model.exceptions.*;
-import com.mashanlote.model.ErrorDetails;
+import com.mashanlote.model.weather.ErrorDetails;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.format.DateTimeParseException;

@@ -1,6 +1,6 @@
-package com.mashanlote;
+package com.mashanlote.services;
 
-import com.mashanlote.model.WeatherPOJO;
+import com.mashanlote.model.weatherapi.WeatherDTO;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,8 +24,8 @@ public class WeatherApiService {
     }
 
     @RateLimiter(name = "api")
-    public WeatherPOJO getCityWeather(String city) {
-        return weatherApi.getForObject(URL, WeatherPOJO.class, city);
+    public WeatherDTO getCityWeather(String city) {
+        return weatherApi.getForObject(URL, WeatherDTO.class, city);
     }
 
 }

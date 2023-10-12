@@ -1,9 +1,10 @@
-package com.mashanlote;
+package com.mashanlote.controllers;
 
-import com.mashanlote.model.CreateRegionRequest;
-import com.mashanlote.model.ErrorDetails;
-import com.mashanlote.model.Weather;
-import com.mashanlote.model.WeatherUpdate;
+import com.mashanlote.services.WeatherService;
+import com.mashanlote.model.weather.CreateRegionRequest;
+import com.mashanlote.model.weather.ErrorDetails;
+import com.mashanlote.model.weather.Weather;
+import com.mashanlote.model.weather.WeatherUpdate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -1,7 +1,6 @@
 package com.mashanlote.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mashanlote.WeatherApiErrorHandler;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;

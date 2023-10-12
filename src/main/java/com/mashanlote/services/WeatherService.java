@@ -1,10 +1,10 @@
-package com.mashanlote;
+package com.mashanlote.services;
 
 import com.mashanlote.model.exceptions.ConflictException;
 import com.mashanlote.model.exceptions.NotFoundException;
-import com.mashanlote.model.CreateRegionRequest;
-import com.mashanlote.model.Weather;
-import com.mashanlote.model.WeatherUpdate;
+import com.mashanlote.model.weather.CreateRegionRequest;
+import com.mashanlote.model.weather.Weather;
+import com.mashanlote.model.weather.WeatherUpdate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
