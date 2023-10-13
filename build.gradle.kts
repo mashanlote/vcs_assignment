@@ -23,6 +23,8 @@ tasks.jar {
 
 dependencies {
     implementation("org.projectlombok:lombok:1.18.28")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.1.4")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc:3.1.4")
     compileOnly("org.projectlombok:lombok:1.18.28")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
     implementation("org.springframework.boot:spring-boot-starter-web:3.1.4")
@@ -33,4 +35,5 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-aop:3.1.2")
     runtimeOnly("com.h2database:h2:2.2.224")
     liquibaseRuntime("org.liquibase:liquibase-core:4.24.0")
+    runtimeOnly("org.liquibase:liquibase-core:4.24.0")
 }

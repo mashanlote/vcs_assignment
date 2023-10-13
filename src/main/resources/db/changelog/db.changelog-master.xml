@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <changeSet id="20231014" author="Timur Mashanlo">
+        <createTable tableName="city">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="city_id_pk" />
+            </column>
+            <column name="name" type="varchar(100)">
+            </column>
+        </createTable>
+        <createTable tableName="weather_observation">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="weather_observation_id_pk" />
+            </column>
+            <column name="city_id" type="uuid">
+                <constraints nullable="false" notNullConstraintName="city_id_nn" />
+            </column>
+            <column name="weather_type_id" type="int">
+                <constraints nullable="false" notNullConstraintName="weather_type_id_nn" />
+            </column>
+            <column name="temperature" type="double precision">
+                <constraints nullable="false" notNullConstraintName="temperature_nn" />
+            </column>
+            <column name="date_time" type="timestamp">
+                <constraints nullable="false" notNullConstraintName="date_time_nn" />
+            </column>
+        </createTable>
+        <createTable tableName="weather_type">
+            <column name="id" type="int">
+                <constraints primaryKey="true" primaryKeyName="weather_typ_id_pk" />
+            </column>
+            <column name="day_description" type="varchar(50)"> </column>
+            <column name="night_description" type="varchar(50)"> </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="weather_observation" baseColumnNames="weather_type_id" constraintName="weather_type_id_fk" referencedTableName="weather_type" referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="weather_observation" baseColumnNames="city_id" constraintName="city_id_fk" referencedTableName="city" referencedColumnNames="id" />
+    </changeSet>
+</databaseChangeLog>
