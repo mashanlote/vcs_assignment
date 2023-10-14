@@ -6,6 +6,7 @@ import com.mashanlote.model.entities.WeatherType;
 import com.mashanlote.model.weather.CreateCityRequest;
 import com.mashanlote.model.weather.CreateWeatherObservationRequest;
 import com.mashanlote.model.weather.UpdateCityRequest;
+import com.mashanlote.model.weather.UpdateWeatherObservationRequest;
 import com.mashanlote.services.WeatherService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -97,6 +98,20 @@ public class WeatherController {
             @RequestBody CreateWeatherObservationRequest request
     ) {
         weatherService.createWeatherObservation(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(value = {"/weather", "/weather/"})
+    public ResponseEntity<?> updateWeatherObservation(
+            @RequestBody UpdateWeatherObservationRequest request
+    ) {
+        weatherService.updateWeatherObservation(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/weather/observations/{id}")
+    public ResponseEntity<?> deleteWeatherObservation(@PathVariable UUID id) {
+        weatherService.deleteWeatherObservation(id);
         return ResponseEntity.noContent().build();
     }
 

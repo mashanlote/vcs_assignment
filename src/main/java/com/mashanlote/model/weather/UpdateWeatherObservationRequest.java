@@ -4,6 +4,6 @@ import java.util.UUID;
 
 public record UpdateWeatherObservationRequest(
         UUID weatherObservationId,
-        Integer temperature,
+        Double temperature,
         Integer weatherTypeId
 ) { }

@@ -6,12 +6,13 @@ import com.mashanlote.model.entities.WeatherType;
 import com.mashanlote.model.exceptions.ConflictException;
 import com.mashanlote.model.exceptions.NotFoundException;
 import com.mashanlote.model.weather.CreateWeatherObservationRequest;
+import com.mashanlote.model.weather.UpdateWeatherObservationRequest;
 import com.mashanlote.repositories.CityRepository;
 import com.mashanlote.repositories.WeatherObservationRepository;
 import com.mashanlote.repositories.WeatherTypeRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -112,13 +113,27 @@ public class WeatherService {
         return weatherObservationRepository.findAllByCityId(cityId);
     }
 
-    public void getMostRecentWeatherObservation(UUID cityId) {}
+    public WeatherObservation getMostRecentWeatherObservation(UUID cityId) {
+        return weatherObservationRepository.findAllByCityId(cityId).stream()
+                .max(Comparator.comparing(WeatherObservation::getDateTime))
+                .orElseThrow(NotFoundException::new);
+    }
 
-    public void updateWeatherObservation(
-    ) {}
+    public void updateWeatherObservation(UpdateWeatherObservationRequest request) {
+        var weather = weatherObservationRepository.findById(request.weatherObservationId());
+        var updatedWeather = weather.orElseThrow(NotFoundException::new);
+        if (!weatherTypeRepository.existsById(request.weatherTypeId())) throw new NotFoundException();
+        WeatherType type = weatherTypeRepository.getReferenceById(request.weatherTypeId());
+        updatedWeather.setWeatherType(type);
+        updatedWeather.setTemperature(request.temperature());
+        weatherObservationRepository.save(updatedWeather);
+    }
 
     public void deleteWeatherObservation(UUID id) {
-
+        if (!weatherObservationRepository.existsById(id)) {
+            throw new NotFoundException();
+        }
+        weatherObservationRepository.deleteById(id);
     }
 
 }
