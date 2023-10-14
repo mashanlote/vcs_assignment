@@ -1,64 +1,124 @@
 package com.mashanlote.services;
 
+import com.mashanlote.model.entities.City;
+import com.mashanlote.model.entities.WeatherObservation;
+import com.mashanlote.model.entities.WeatherType;
 import com.mashanlote.model.exceptions.ConflictException;
 import com.mashanlote.model.exceptions.NotFoundException;
-import com.mashanlote.model.weather.CreateRegionRequest;
-import com.mashanlote.model.weather.Weather;
-import com.mashanlote.model.weather.WeatherUpdate;
+import com.mashanlote.model.weather.CreateWeatherObservationRequest;
+import com.mashanlote.repositories.CityRepository;
+import com.mashanlote.repositories.WeatherObservationRepository;
+import com.mashanlote.repositories.WeatherTypeRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
+// TODO: create DTOs
 @Service
 public class WeatherService {
 
-    Map<UUID, Weather> regionUUIDtoWeatherMap = new HashMap<>();
-    Map<String, UUID> regionNameToRegionIdMap = new HashMap<>();
+    CityRepository cityRepository;
+    WeatherTypeRepository weatherTypeRepository;
+    WeatherObservationRepository weatherObservationRepository;
 
-    public List<UUID> getAvailableRegionUUIDs() {
-        return regionUUIDtoWeatherMap.values().stream()
-                .map(Weather::getRegionId)
+    public WeatherService(
+            CityRepository cityRepository,
+            WeatherTypeRepository weatherTypeRepository,
+            WeatherObservationRepository weatherObservationRepository
+    ) {
+        this.cityRepository = cityRepository;
+        this.weatherTypeRepository = weatherTypeRepository;
+        this.weatherObservationRepository = weatherObservationRepository;
+    }
+
+    public UUID createCity(String name) {
+        City city = City.builder()
+                .name(name)
+                .build();
+        var savedCity = cityRepository.save(city);
+        return savedCity.getId();
+    }
+
+    public City getCity(UUID id) {
+        return cityRepository.findById(id).orElseThrow(NotFoundException::new);
+    }
+
+    public List<City> getCities() {
+        return cityRepository.findAll();
+    }
+
+    public List<UUID> getCities(String name) {
+        return cityRepository.findCitiesByName(name).stream()
+                .map(City::getId)
                 .toList();
     }
 
-    public Weather getCityWeatherByRegionId(UUID regionId) {
-        Weather weather = regionUUIDtoWeatherMap.get(regionId);
-        if (weather == null) throw new NotFoundException();
-        return weather;
+    public void updateCity(UUID id, String name) {
+        var result = cityRepository.findById(id);
+        if (result.isEmpty()) throw new NotFoundException();
+        City city = result.get();
+        city.setName(name);
+        cityRepository.save(city);
     }
 
-    public UUID addNewRegion(CreateRegionRequest region) {
-        if (regionNameToRegionIdMap.containsKey(region.regionName())) throw new ConflictException();
-        LocalDateTime dateTime = LocalDateTime.now();
-        UUID regionId = UUID.randomUUID();
-        Weather weather = Weather.builder()
-                .regionId(regionId)
-                .regionName(region.regionName())
-                .dateTime(dateTime)
-                .temperature(region.temperature())
+    public void deleteCity(UUID id) {
+        if (!cityRepository.existsById(id)) {
+            throw new NotFoundException();
+        }
+        cityRepository.deleteById(id);
+    }
+
+    public void createOrUpdateWeatherType(WeatherType type) {
+        weatherTypeRepository.save(type);
+    }
+
+    public WeatherType getWeatherType(Integer id) {
+        var type = weatherTypeRepository.findById(id);
+        return type.orElseThrow(NotFoundException::new);
+    }
+
+    public List<WeatherType> getWeatherTypes() {
+        return weatherTypeRepository.findAll();
+    }
+
+    public void deleteWeatherType(Integer id) {
+        if (!weatherTypeRepository.existsById(id)) {
+            throw new NotFoundException();
+        }
+        weatherTypeRepository.deleteById(id);
+    }
+
+    public void createWeatherObservation(CreateWeatherObservationRequest request) {
+        if (weatherObservationRepository.existsByCityIdAndDateTime(
+                request.cityId(), request.dateTime())
+        ) {
+            throw new ConflictException();
+        }
+        WeatherType weatherType = getWeatherType(request.weatherTypeId());
+        City city = getCity(request.cityId());
+        WeatherObservation weatherObservation = WeatherObservation.builder()
+                .dateTime(request.dateTime())
+                .weatherType(weatherType)
+                .city(city)
+                .temperature(request.temperature())
                 .build();
-        regionNameToRegionIdMap.put(region.regionName(), regionId);
-        regionUUIDtoWeatherMap.put(regionId, weather);
-        return regionId;
+        weatherObservationRepository.save(weatherObservation);
     }
 
-    public void updateWeatherData(UUID regionId, WeatherUpdate weatherUpdate) {
-        if (!regionUUIDtoWeatherMap.containsKey(regionId)) throw new NotFoundException();
-        Weather weather = Weather.builder()
-                .regionId(regionId)
-                .regionName(regionUUIDtoWeatherMap.get(regionId).getRegionName())
-                .dateTime(LocalDateTime.now())
-                .temperature(weatherUpdate.temperature())
-                .build();
-        regionUUIDtoWeatherMap.put(regionId, weather);
+    // TODO: return DTO
+    public List<WeatherObservation> getCityWeatherObservation(UUID cityId) {
+        return weatherObservationRepository.findAllByCityId(cityId);
     }
 
-    public void removeRegion(UUID regionId) {
-        if (!regionUUIDtoWeatherMap.containsKey(regionId)) throw new NotFoundException();
-        String regionName = regionUUIDtoWeatherMap.get(regionId).getRegionName();
-        regionUUIDtoWeatherMap.remove(regionId);
-        regionNameToRegionIdMap.remove(regionName);
+    public void getMostRecentWeatherObservation(UUID cityId) {}
+
+    public void updateWeatherObservation(
+    ) {}
+
+    public void deleteWeatherObservation(UUID id) {
+
     }
 
 }

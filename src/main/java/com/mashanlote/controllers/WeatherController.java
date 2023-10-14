@@ -1,26 +1,20 @@
 package com.mashanlote.controllers;
 
+import com.mashanlote.model.entities.City;
+import com.mashanlote.model.entities.WeatherObservation;
+import com.mashanlote.model.entities.WeatherType;
+import com.mashanlote.model.weather.CreateCityRequest;
+import com.mashanlote.model.weather.CreateWeatherObservationRequest;
+import com.mashanlote.model.weather.UpdateCityRequest;
 import com.mashanlote.services.WeatherService;
-import com.mashanlote.model.weather.CreateRegionRequest;
-import com.mashanlote.model.weather.ErrorDetails;
-import com.mashanlote.model.weather.Weather;
-import com.mashanlote.model.weather.WeatherUpdate;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController()
-@RequestMapping("/api/weather/cities")
+@RequestMapping("/api")
 public class WeatherController {
 
     WeatherService weatherService;
@@ -29,69 +23,81 @@ public class WeatherController {
         this.weatherService = weatherService;
     }
 
-    @Operation(summary = "Get a list of available regions")
-    @ApiResponses(
-        @ApiResponse(responseCode = "200", description = "Return the list of UUIDs of the available regions")
-    )
-    @GetMapping("")
-    public ResponseEntity<List<UUID>> getAvailableRegionUUIDs() {
-        var availableRegions = weatherService.getAvailableRegionUUIDs();
-        return ResponseEntity.ok()
-                .body(availableRegions);
+    @PostMapping(value = {"/cities", "/cities/"})
+    public ResponseEntity<UUID> createCity(@RequestBody CreateCityRequest createCityRequest) {
+        var id = weatherService.createCity(createCityRequest.name());
+        return ResponseEntity.ok(id);
     }
 
-    @Operation(summary = "Add a new region")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Most recent weather for the city"),
-            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = ErrorDetails.class))),
-            @ApiResponse(responseCode = "409", description = "Region already exists", content = @Content(schema = @Schema(implementation = ErrorDetails.class)))
-    })
-    @PostMapping("")
-    public ResponseEntity<?> addCity(@RequestBody CreateRegionRequest region) {
-        var regionId = weatherService.addNewRegion(region);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("regionId", regionId));
+    @GetMapping(value = {"/cities", "/cities/"})
+    public ResponseEntity<List<City>> getAllCities() {
+        var cities = weatherService.getCities();
+        return ResponseEntity.ok(cities);
     }
 
-    @Operation(summary = "Get weather for the provided city")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Most recent weather for the city"),
-            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = ErrorDetails.class))),
-            @ApiResponse(responseCode = "404", description = "Region does not exist", content = @Content(schema = @Schema(implementation = ErrorDetails.class)))
-    })
-    @GetMapping("/{regionId}")
-    public ResponseEntity<Weather> getCityWeather(
-            @Parameter(description = "UUID of the region")
-            @PathVariable UUID regionId
+    @GetMapping("/cities/{id}")
+    public ResponseEntity<City> getCity(@PathVariable UUID id) {
+        City city = weatherService.getCity(id);
+        return ResponseEntity.ok(city);
+    }
+
+    @GetMapping("/cities/all/{name}")
+    public ResponseEntity<List<UUID>> getCity(@PathVariable String name) {
+        var city = weatherService.getCities(name);
+        return ResponseEntity.ok(city);
+    }
+
+    @PutMapping("/cities/{id}")
+    public ResponseEntity<?> updateCity(
+            @PathVariable UUID id,
+            @RequestBody UpdateCityRequest updateCityRequest
     ) {
-        var weather = weatherService.getCityWeatherByRegionId(regionId);
-        return ResponseEntity.ok()
-                .body(weather);
+        weatherService.updateCity(id, updateCityRequest.name());
+        return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Remove a region from database")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Most recent weather for the city"),
-            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = ErrorDetails.class))),
-            @ApiResponse(responseCode = "404", description = "Region does not exists", content = @Content(schema = @Schema(implementation = ErrorDetails.class)))
-    })
-    @DeleteMapping("/{regionId}")
-    public ResponseEntity<?> deleteCity(@PathVariable UUID regionId) {
-        weatherService.removeRegion(regionId);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    @DeleteMapping("/cities/{id}")
+    public ResponseEntity<?> deleteCity(@PathVariable UUID id) {
+        weatherService.deleteCity(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Updates weather for the provided city")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Most recent weather for the city"),
-            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = ErrorDetails.class))),
-            @ApiResponse(responseCode = "404", description = "Region does not exists", content = @Content(schema = @Schema(implementation = ErrorDetails.class)))
-    })
-    @PutMapping("/{regionId}")
-    public ResponseEntity<?> updateCity(@PathVariable UUID regionId, @RequestBody WeatherUpdate weatherUpdate) {
-        weatherService.updateWeatherData(regionId, weatherUpdate);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    @GetMapping(value = {"/weather-types", "/weather-types/"})
+    public ResponseEntity<List<WeatherType>> getWeatherTypes() {
+        var types = weatherService.getWeatherTypes();
+        return ResponseEntity.ok(types);
     }
 
+    @GetMapping("/weather-types/{id}")
+    public ResponseEntity<WeatherType> getWeatherType(@PathVariable Integer id) {
+        var type = weatherService.getWeatherType(id);
+        return ResponseEntity.ok(type);
+    }
+
+    @PutMapping(value = {"/weather-types", "/weather-types/"})
+    public ResponseEntity<?> createOrUpdateWeatherType(@RequestBody WeatherType type) {
+        weatherService.createOrUpdateWeatherType(type);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/weather-types/{id}")
+    public ResponseEntity<?> deleteWeatherType(@PathVariable Integer id) {
+        weatherService.deleteWeatherType(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/weather/{cityId}")
+    public ResponseEntity<List<WeatherObservation>> getWeatherObservations(@PathVariable UUID cityId) {
+        var observations = weatherService.getCityWeatherObservation(cityId);
+        return ResponseEntity.ok(observations);
+    }
+
+    @PostMapping(value = {"/weather", "/weather/"})
+    public ResponseEntity<?> createWeatherObservation(
+            @RequestBody CreateWeatherObservationRequest request
+    ) {
+        weatherService.createWeatherObservation(request);
+        return ResponseEntity.noContent().build();
+    }
 
 }

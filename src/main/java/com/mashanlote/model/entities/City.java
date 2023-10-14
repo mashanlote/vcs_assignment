@@ -1,25 +1,29 @@
 package com.mashanlote.model.entities;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.proxy.HibernateProxy;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class City {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
 
     String name;
 
-    @OneToMany(mappedBy = "city")
+    @JsonManagedReference(value = "cityToObservation")
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
     Set<WeatherObservation> weatherObservations;
 
 }
