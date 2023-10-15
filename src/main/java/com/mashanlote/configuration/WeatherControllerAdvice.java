@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.time.format.DateTimeParseException;
 
@@ -34,7 +35,7 @@ public class WeatherControllerAdvice {
     @ExceptionHandler({
             AuthorizationException.class,
             AuthenticationException.class,
-            DateTimeParseException.class
+            DateTimeParseException.class,
     })
     public ResponseEntity<ErrorDetails> handleAuthOrInternal() {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

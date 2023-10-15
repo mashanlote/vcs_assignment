@@ -3,137 +3,41 @@ package com.mashanlote.services;
 import com.mashanlote.model.entities.City;
 import com.mashanlote.model.entities.WeatherObservation;
 import com.mashanlote.model.entities.WeatherType;
-import com.mashanlote.model.exceptions.ConflictException;
-import com.mashanlote.model.exceptions.NotFoundException;
 import com.mashanlote.model.weather.CreateWeatherObservationRequest;
 import com.mashanlote.model.weather.UpdateWeatherObservationRequest;
-import com.mashanlote.repositories.CityRepository;
-import com.mashanlote.repositories.WeatherObservationRepository;
-import com.mashanlote.repositories.WeatherTypeRepository;
-import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
-// TODO: create DTOs
-@Service
-public class WeatherService {
+public interface WeatherService {
+    UUID createCity(String name);
 
-    CityRepository cityRepository;
-    WeatherTypeRepository weatherTypeRepository;
-    WeatherObservationRepository weatherObservationRepository;
+    City getCity(UUID id);
 
-    public WeatherService(
-            CityRepository cityRepository,
-            WeatherTypeRepository weatherTypeRepository,
-            WeatherObservationRepository weatherObservationRepository
-    ) {
-        this.cityRepository = cityRepository;
-        this.weatherTypeRepository = weatherTypeRepository;
-        this.weatherObservationRepository = weatherObservationRepository;
-    }
+    List<City> getCities();
 
-    public UUID createCity(String name) {
-        City city = City.builder()
-                .name(name)
-                .build();
-        var savedCity = cityRepository.save(city);
-        return savedCity.getId();
-    }
+    List<UUID> getCities(String name);
 
-    public City getCity(UUID id) {
-        return cityRepository.findById(id).orElseThrow(NotFoundException::new);
-    }
+    void updateCity(UUID id, String name);
 
-    public List<City> getCities() {
-        return cityRepository.findAll();
-    }
+    void deleteCity(UUID id);
 
-    public List<UUID> getCities(String name) {
-        return cityRepository.findCitiesByName(name).stream()
-                .map(City::getId)
-                .toList();
-    }
+    void createOrUpdateWeatherType(WeatherType type);
 
-    public void updateCity(UUID id, String name) {
-        var result = cityRepository.findById(id);
-        if (result.isEmpty()) throw new NotFoundException();
-        City city = result.get();
-        city.setName(name);
-        cityRepository.save(city);
-    }
+    WeatherType getWeatherType(Integer id);
 
-    public void deleteCity(UUID id) {
-        if (!cityRepository.existsById(id)) {
-            throw new NotFoundException();
-        }
-        cityRepository.deleteById(id);
-    }
+    List<WeatherType> getWeatherTypes();
 
-    public void createOrUpdateWeatherType(WeatherType type) {
-        weatherTypeRepository.save(type);
-    }
+    void deleteWeatherType(Integer id);
 
-    public WeatherType getWeatherType(Integer id) {
-        var type = weatherTypeRepository.findById(id);
-        return type.orElseThrow(NotFoundException::new);
-    }
-
-    public List<WeatherType> getWeatherTypes() {
-        return weatherTypeRepository.findAll();
-    }
-
-    public void deleteWeatherType(Integer id) {
-        if (!weatherTypeRepository.existsById(id)) {
-            throw new NotFoundException();
-        }
-        weatherTypeRepository.deleteById(id);
-    }
-
-    public void createWeatherObservation(CreateWeatherObservationRequest request) {
-        if (weatherObservationRepository.existsByCityIdAndDateTime(
-                request.cityId(), request.dateTime())
-        ) {
-            throw new ConflictException();
-        }
-        WeatherType weatherType = getWeatherType(request.weatherTypeId());
-        City city = getCity(request.cityId());
-        WeatherObservation weatherObservation = WeatherObservation.builder()
-                .dateTime(request.dateTime())
-                .weatherType(weatherType)
-                .city(city)
-                .temperature(request.temperature())
-                .build();
-        weatherObservationRepository.save(weatherObservation);
-    }
+    void createWeatherObservation(CreateWeatherObservationRequest request);
 
     // TODO: return DTO
-    public List<WeatherObservation> getCityWeatherObservation(UUID cityId) {
-        return weatherObservationRepository.findAllByCityId(cityId);
-    }
+    List<WeatherObservation> getCityWeatherObservation(UUID cityId);
 
-    public WeatherObservation getMostRecentWeatherObservation(UUID cityId) {
-        return weatherObservationRepository.findAllByCityId(cityId).stream()
-                .max(Comparator.comparing(WeatherObservation::getDateTime))
-                .orElseThrow(NotFoundException::new);
-    }
+    WeatherObservation getMostRecentWeatherObservation(UUID cityId);
 
-    public void updateWeatherObservation(UpdateWeatherObservationRequest request) {
-        var weather = weatherObservationRepository.findById(request.weatherObservationId());
-        var updatedWeather = weather.orElseThrow(NotFoundException::new);
-        if (!weatherTypeRepository.existsById(request.weatherTypeId())) throw new NotFoundException();
-        WeatherType type = weatherTypeRepository.getReferenceById(request.weatherTypeId());
-        updatedWeather.setWeatherType(type);
-        updatedWeather.setTemperature(request.temperature());
-        weatherObservationRepository.save(updatedWeather);
-    }
+    void updateWeatherObservation(UpdateWeatherObservationRequest request);
 
-    public void deleteWeatherObservation(UUID id) {
-        if (!weatherObservationRepository.existsById(id)) {
-            throw new NotFoundException();
-        }
-        weatherObservationRepository.deleteById(id);
-    }
-
+    void deleteWeatherObservation(UUID id);
 }

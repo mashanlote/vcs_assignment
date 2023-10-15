@@ -8,6 +8,7 @@ import com.mashanlote.model.weather.CreateWeatherObservationRequest;
 import com.mashanlote.model.weather.UpdateCityRequest;
 import com.mashanlote.model.weather.UpdateWeatherObservationRequest;
 import com.mashanlote.services.WeatherService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class WeatherController {
 
     WeatherService weatherService;
 
-    public WeatherController(WeatherService weatherService) {
+    public WeatherController(@Qualifier("JDBC") WeatherService weatherService) {
         this.weatherService = weatherService;
     }
 
