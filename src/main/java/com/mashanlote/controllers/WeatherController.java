@@ -21,7 +21,7 @@ public class WeatherController {
 
     WeatherService weatherService;
 
-    public WeatherController(@Qualifier("JDBC") WeatherService weatherService) {
+    public WeatherController(@Qualifier("getService") WeatherService weatherService) {
         this.weatherService = weatherService;
     }
 

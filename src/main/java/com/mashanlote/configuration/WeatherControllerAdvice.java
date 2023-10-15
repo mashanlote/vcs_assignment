@@ -23,7 +23,7 @@ public class WeatherControllerAdvice {
     @ExceptionHandler({NotFoundException.class})
     public ResponseEntity<ErrorDetails> handleNotFound() {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorDetails("404", "Requested city not found"));
+                .body(new ErrorDetails("404", "Requested resource not found"));
     }
 
     @ExceptionHandler({ConflictException.class})
@@ -36,6 +36,7 @@ public class WeatherControllerAdvice {
             AuthorizationException.class,
             AuthenticationException.class,
             DateTimeParseException.class,
+            InternalServerErrorException.class
     })
     public ResponseEntity<ErrorDetails> handleAuthOrInternal() {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

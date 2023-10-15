@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 // TODO: create DTOs
-@Service
-@Qualifier("JPA")
+@Service("JPA")
 public class WeatherServiceJpa implements WeatherService {
 
     CityRepository cityRepository;
@@ -105,6 +104,9 @@ public class WeatherServiceJpa implements WeatherService {
 
     @Override
     public void createWeatherObservation(CreateWeatherObservationRequest request) {
+        if (!cityRepository.existsById(request.cityId())) {
+            throw new NotFoundException();
+        }
         if (weatherObservationRepository.existsByCityIdAndDateTime(
                 request.cityId(), request.dateTime())
         ) {
