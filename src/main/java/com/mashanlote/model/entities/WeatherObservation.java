@@ -31,7 +31,7 @@ public class WeatherObservation {
     Double temperature;
 
     @JsonBackReference(value = "typeToObservation")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "weather_type_id")
     WeatherType weatherType;
 

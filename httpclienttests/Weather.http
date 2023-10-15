@@ -1,69 +1,62 @@
-### Should return an empty list
-GET http://localhost:8080/api/weather/cities
-Accept: application/json
+###
+GET http://localhost:8080/api/cities
 
-### Returns the UUID of the created Weather instance
-POST http://localhost:8080/api/weather/cities
+###
+POST http://localhost:8080/api/cities
 Content-Type: application/json
 
-{"regionName":  "Tomsk", "temperature": 4}
+{"name": "Ryazan"}
 
-> {%
-client.global.set("regionId", response.body.regionId)
- %}
+###
+GET http://localhost:8080/api/cities/all/Tomsk
 
-### Get the weather instance by UUID we received in the previous POST request
-GET http://localhost:8080/api/weather/cities/{{regionId}}
-Accept: application/json
+###
+GET http://localhost:8080/api/cities/aa0c4adc-2195-4ccf-bc33-aeca2cea6f7b
 
-### Get a 409 when trying to add the same city again (even with a different temperature)
-POST http://localhost:8080/api/weather/cities
+###
+PUT http://localhost:8080/api/cities/aa0c4adc-2195-4ccf-bc33-aeca2cea6f7b
 Content-Type: application/json
 
-{"regionName":  "Tomsk", "temperature": 5}
+{"name":  "Tmsk"}
 
-### Make sure there is only one city in the list of cities
-GET http://localhost:8080/api/weather/cities
-Accept: application/json
+###
+DELETE http://localhost:8080/api/cities/aa0c4adc-2195-4ccf-bc33-aeca2cea6f7b
 
-### Get a 400 by providing a regionId that does not conform to UUID
-GET http://localhost:8080/api/weather/cities/invalidRegionId
-Accept: application/json
+###
+GET http://localhost:8080/api/weather/7b6815c3-31a2-4bde-a131-efe315b46529
 
-### Get a 404 by providing a regionId that does not exist
-GET http://localhost:8080/api/weather/cities/b00c916f-856e-4a44-b208-bc165a85d50a
-Accept: application/json
-
-### Add a new city, do not save it in a global variable
-POST http://localhost:8080/api/weather/cities
+###
+POST http://localhost:8080/api/weather/
 Content-Type: application/json
 
-{"regionName":  "Moscow", "temperature": 10}
+{
+  "cityId": "7b6815c3-31a2-4bde-a131-efe315b46529",
+  "dateTime": "2023-10-15 19:30:00",
+  "temperature": 13.50,
+  "weatherTypeId": 1006
+}
 
-### Make sure that list now contains two cities
-GET http://localhost:8080/api/weather/cities
-Accept: application/json
-
-### Update the first city
-PUT http://localhost:8080/api/weather/cities/{{regionId}}
+###
+PUT http://localhost:8080/api/weather/
 Content-Type: application/json
 
-{"temperature": 20}
+{"weatherObservationId": "9d913ede-e394-4e7e-a123-6e16b8ed4936", "temperature": 13.25, "weatherTypeId": 1003}
 
-### Make sure the temperature was updated
-GET http://localhost:8080/api/weather/cities/{{regionId}}
-Accept: application/json
+###
+DELETE http://localhost:8080/api/weather/observations/9d913ede-e394-4e7e-a123-6e16b8ed4936
 
-### Delete the city
-DELETE http://localhost:8080/api/weather/cities/{{regionId}}
+###
+GET http://localhost:8080/api/weather-types
+
+###
+PUT http://localhost:8080/api/weather-types
 Content-Type: application/json
 
-### Make sure it is no longer accessible
-GET http://localhost:8080/api/weather/cities/{{regionId}}
-Accept: application/json
+{"id":  1000, "dayDescription":  "Sunny, init?", "nightDescription":  "Where is the sun, eh?"}
 
-### Make sure there is only one city in the list
-GET http://localhost:8080/api/weather/cities
-Accept: application/json
+###
+GET http://localhost:8080/api/weather-types/1000
 
+###
+DELETE http://localhost:8080/api/weather-types/1000
 

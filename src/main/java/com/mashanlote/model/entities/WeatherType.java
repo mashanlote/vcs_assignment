@@ -1,5 +1,6 @@
 package com.mashanlote.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -28,6 +29,7 @@ public class WeatherType {
 
     @JsonManagedReference(value = "typeToObservation")
     @OneToMany(mappedBy = "weatherType", cascade = CascadeType.ALL)
+    @JsonIgnore
     Set<WeatherObservation> weatherObservation;
 
 }

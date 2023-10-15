@@ -1,6 +1,8 @@
 package com.mashanlote.model.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,6 +26,7 @@ public class City {
 
     @JsonManagedReference(value = "cityToObservation")
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
+    @JsonIgnore
     Set<WeatherObservation> weatherObservations;
 
 }
