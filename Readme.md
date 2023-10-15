@@ -6,8 +6,6 @@
 
 `java -jar ./build/libs/vcs_assignment.jar`
 
-Описание API можно посмотреть по адресу 
+По умолчанию используется JDBC-имплементация crud-методов. Для использования JPA можно запустить jar со следующим параметром.
 
-`http://localhost:8080/swagger-ui/index.html`
-
-В папке `httpclienttests` представлены тесты ручек, которые можно запустить в IntelliJ Idea. 
+`java -jar ./build/libs/vcs_assignment.jar --service.class=JPA`
