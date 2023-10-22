@@ -9,7 +9,6 @@ import com.mashanlote.model.exceptions.NotFoundException;
 import com.mashanlote.model.weather.CreateWeatherObservationRequest;
 import com.mashanlote.model.weather.UpdateWeatherObservationRequest;
 import com.zaxxer.hikari.HikariDataSource;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -33,6 +32,7 @@ public class WeatherServiceJdbc implements WeatherService {
 
     @Override
     public UUID createCity(String name) {
+        if (!getCities(name).isEmpty()) throw new ConflictException();
         try (Connection con = dataSource.getConnection()) {
             String query = "INSERT INTO city (id, name) VALUES (?, ?)";
             try (PreparedStatement st = con.prepareStatement(query)) {
@@ -163,12 +163,27 @@ public class WeatherServiceJdbc implements WeatherService {
 
     @Override
     public void createOrUpdateWeatherType(WeatherType type) {
+        WeatherType oldType;
+        try {
+            oldType = getWeatherType(type.getId());
+        } catch (NotFoundException e) {
+            oldType = type;
+        }
+        var updatedWeatherType = WeatherType.builder()
+                .id(oldType.getId())
+                .dayDescription(type.getDayDescription().isEmpty() ?
+                        oldType.getDayDescription() :
+                        type.getDayDescription())
+                .nightDescription(type.getNightDescription().isEmpty() ?
+                        oldType.getNightDescription() :
+                        type.getNightDescription())
+                .build();
         try (Connection con = dataSource.getConnection()) {
             String query = "MERGE INTO weather_type (id, day_description, night_description) KEY(id) VALUES(?, ?, ?)";
             try (PreparedStatement st = con.prepareStatement(query)) {
-                st.setInt(1, type.getId());
-                st.setString(2, type.getDayDescription());
-                st.setString(3, type.getNightDescription());
+                st.setInt(1, updatedWeatherType.getId());
+                st.setString(2, updatedWeatherType.getDayDescription());
+                st.setString(3, updatedWeatherType.getNightDescription());
                 st.executeUpdate();
             } catch (SQLException e) {
                 throw new InternalServerErrorException();

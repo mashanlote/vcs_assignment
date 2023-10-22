@@ -40,6 +40,7 @@ public class WeatherServiceJpa implements WeatherService {
         City city = City.builder()
                 .name(name)
                 .build();
+        if (cityRepository.existsByName(name)) throw new ConflictException();
         var savedCity = cityRepository.save(city);
         return savedCity.getId();
     }
@@ -80,7 +81,21 @@ public class WeatherServiceJpa implements WeatherService {
 
     @Override
     public void createOrUpdateWeatherType(WeatherType type) {
-        weatherTypeRepository.save(type);
+        var oldWeatherType = weatherTypeRepository.findById(type.getId());
+        if (oldWeatherType.isEmpty()) {
+            weatherTypeRepository.save(type);
+        } else {
+            var updatedWeatherType = WeatherType.builder()
+                    .id(oldWeatherType.get().getId())
+                    .dayDescription(type.getDayDescription().isEmpty() ?
+                            oldWeatherType.get().getDayDescription() :
+                            type.getDayDescription())
+                    .nightDescription(type.getNightDescription().isEmpty() ?
+                            oldWeatherType.get().getNightDescription() :
+                            type.getNightDescription())
+                    .build();
+            weatherTypeRepository.save(updatedWeatherType);
+        }
     }
 
     @Override

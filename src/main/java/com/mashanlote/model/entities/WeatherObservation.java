@@ -14,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString(exclude = {"id"})
 public class WeatherObservation {
 
     @Id

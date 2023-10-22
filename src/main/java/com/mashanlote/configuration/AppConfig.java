@@ -16,7 +16,7 @@ public class AppConfig {
     private ApplicationContext context;
 
     @Bean
-    public WeatherService getService(@Value("${service.class}") String qualifier) {
+    public WeatherService getService(@Value("${database.access.api}") String qualifier) {
         log.info("Using " + qualifier + " weatherService");
         return (WeatherService) context.getBean(qualifier);
     }
