@@ -17,7 +17,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
-// TODO: create DTOs
 @Service("JPA")
 public class WeatherServiceJpa implements WeatherService {
 
@@ -138,7 +137,6 @@ public class WeatherServiceJpa implements WeatherService {
         weatherObservationRepository.save(weatherObservation);
     }
 
-    // TODO: return DTO
     @Override
     public List<WeatherObservation> getCityWeatherObservation(UUID cityId) {
         return weatherObservationRepository.findAllByCityId(cityId);

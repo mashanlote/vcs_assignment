@@ -32,7 +32,6 @@ public interface WeatherService {
 
     void createWeatherObservation(CreateWeatherObservationRequest request);
 
-    // TODO: return DTO
     List<WeatherObservation> getCityWeatherObservation(UUID cityId);
 
     WeatherObservation getMostRecentWeatherObservation(UUID cityId);

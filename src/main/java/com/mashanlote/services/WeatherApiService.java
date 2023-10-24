@@ -8,7 +8,6 @@ import com.mashanlote.model.exceptions.InternalServerErrorException;
 import com.mashanlote.model.exceptions.NotFoundException;
 import com.mashanlote.model.weatherapi.WeatherDTO;
 import com.mashanlote.repositories.CityRepository;
-import com.mashanlote.repositories.WeatherObservationRepository;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.transaction.Transactional;
@@ -33,13 +32,24 @@ import java.util.UUID;
 @Service
 public class WeatherApiService {
 
+    private final static String FIND_CITY_BY_NAME = "SELECT * FROM city WHERE name=?";
+    private final static String FIND_ALL_CITIES = "SELECT * FROM city";
+    private final static String FIND_WEATHER_TYPE_BY_ID = "SELECT * FROM weather_type WHERE id=?";
+    private final static String FIND_WEATHER_OBSERVATION_BY_CITY_ID_AND_DATE_TIME = "SELECT * FROM weather_observation " +
+            "WHERE city_id=? AND date_time=?";
+    private final static String CREATE_CITY = "INSERT INTO city (id, name) values (?, ?)";
+    private final static String CREATE_WEATHER_TYPE = "INSERT INTO weather_type (id, day_description, night_description) " +
+            "values(?, ?, ?)";
+    private final static String CREATE_WEATHER_OBSERVATION = "INSERT INTO weather_observation " +
+            "(id, city_id, weather_type_id, temperature, date_time) values (?, ?, ?, ?, ?)";
+    private final static String DELETE_WEATHER_OBSERVATION_BY_ID = "DELETE FROM weather_observation WHERE id=?";
+
     private final HikariDataSource dataSource;
     private final String URL;
     private final CityRepository cityRepository;
     private final JdbcTemplate jdbcTemplate;
     private final TransactionTemplate transactionTemplate;
     private final PlatformTransactionManager transactionManager;
-
 
     @Qualifier("weather")
     RestTemplate weatherApi;
@@ -77,20 +87,13 @@ public class WeatherApiService {
         try (Connection conn = dataSource.getConnection()) {
             conn.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
             conn.setAutoCommit(false);
-            String findCityQuery = "SELECT * FROM city WHERE name=?";
-            String findWeatherObservationQuery = "SELECT * FROM weather_observation WHERE city_id=? AND date_time=?";
-            String findWeatherTypeQuery = "SELECT * FROM weather_type WHERE id=?";
-            String createCityQuery = "INSERT INTO city (id, name) values (?, ?)";
-            String createWeatherTypeQuery = "INSERT INTO weather_type (id, day_description, night_description) " +
-                    "values(?, ?, ?)";
-            String createWeatherObservationQuery = "INSERT INTO weather_observation " +
-                    "(id, city_id, weather_type_id, temperature, date_time) values (?, ?, ?, ?, ?)";
-            try (PreparedStatement findCityStatement = conn.prepareStatement(findCityQuery);
-                 PreparedStatement findWeatherObservationStatement = conn.prepareStatement(findWeatherObservationQuery);
-                 PreparedStatement findWeatherTypeStatement = conn.prepareStatement(findWeatherTypeQuery);
-                 PreparedStatement createCityStatement = conn.prepareStatement(createCityQuery);
-                 PreparedStatement createWeatherTypeStatement = conn.prepareStatement(createWeatherTypeQuery);
-                 PreparedStatement createWeatherObservationStatement = conn.prepareStatement(createWeatherObservationQuery);
+            try (PreparedStatement findCityStatement = conn.prepareStatement(FIND_CITY_BY_NAME);
+                 PreparedStatement findWeatherObservationStatement = conn.prepareStatement(
+                         FIND_WEATHER_OBSERVATION_BY_CITY_ID_AND_DATE_TIME);
+                 PreparedStatement findWeatherTypeStatement = conn.prepareStatement(FIND_WEATHER_TYPE_BY_ID);
+                 PreparedStatement createCityStatement = conn.prepareStatement(CREATE_CITY);
+                 PreparedStatement createWeatherTypeStatement = conn.prepareStatement(CREATE_WEATHER_TYPE);
+                 PreparedStatement createWeatherObservationStatement = conn.prepareStatement(CREATE_WEATHER_OBSERVATION);
             ) {
                 findCityStatement.setString(1, cityName);
                 var findCityQueryResult = findCityStatement.executeQuery();
@@ -176,7 +179,7 @@ public class WeatherApiService {
 
     @Transactional
     public WeatherObservation getMostRecentObservation(String cityName) {
-        var city = jdbcTemplate.queryForObject("SELECT * FROM city WHERE name=?",
+        var city = jdbcTemplate.queryForObject(FIND_CITY_BY_NAME,
                 (rs, rn) -> City.builder()
                         .name(rs.getString("name"))
                         .id(UUID.fromString(rs.getString("id")))
@@ -203,7 +206,7 @@ public class WeatherApiService {
 
     public void deleteObservation(UUID id) {
         transactionTemplate.execute(status -> jdbcTemplate.update(
-                "DELETE FROM weather_observation WHERE id=?",
+                DELETE_WEATHER_OBSERVATION_BY_ID,
                 id.toString())
         );
     }
@@ -212,7 +215,7 @@ public class WeatherApiService {
         TransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
         var transaction = transactionManager.getTransaction(transactionDefinition);
         try {
-            var cities = jdbcTemplate.query("SELECT * FROM city",
+            var cities = jdbcTemplate.query(FIND_ALL_CITIES,
                     (rs, rn) -> City.builder()
                             .name(rs.getString("name"))
                             .id(UUID.fromString(rs.getString("id")))
@@ -224,6 +227,5 @@ public class WeatherApiService {
             throw new InternalServerErrorException();
         }
     }
-
 
 }
