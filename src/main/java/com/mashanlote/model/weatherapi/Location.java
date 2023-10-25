@@ -1,4 +1,4 @@
-package com.mashanlote.model;
+package com.mashanlote.model.weatherapi;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

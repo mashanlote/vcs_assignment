@@ -1,16 +1,13 @@
-package com.mashanlote;
+package com.mashanlote.configuration;
 
 import com.mashanlote.model.exceptions.*;
-import com.mashanlote.model.ErrorDetails;
+import com.mashanlote.model.weather.ErrorDetails;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.time.format.DateTimeParseException;
 
@@ -26,7 +23,7 @@ public class WeatherControllerAdvice {
     @ExceptionHandler({NotFoundException.class})
     public ResponseEntity<ErrorDetails> handleNotFound() {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorDetails("404", "Requested city not found"));
+                .body(new ErrorDetails("404", "Requested resource not found"));
     }
 
     @ExceptionHandler({ConflictException.class})
@@ -38,7 +35,8 @@ public class WeatherControllerAdvice {
     @ExceptionHandler({
             AuthorizationException.class,
             AuthenticationException.class,
-            DateTimeParseException.class
+            DateTimeParseException.class,
+            InternalServerErrorException.class
     })
     public ResponseEntity<ErrorDetails> handleAuthOrInternal() {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                            http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                            http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <changeSet id="1" author="Timur Mashanlo">
+        <createTable tableName="city">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="city_id_pk" />
+            </column>
+            <column name="name" type="varchar(100)">
+            </column>
+        </createTable>
+        <createTable tableName="weather_observation">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="weather_observation_id_pk" />
+            </column>
+            <column name="city_id" type="uuid">
+                <constraints nullable="false" notNullConstraintName="city_id_nn" />
+            </column>
+            <column name="weather_type_id" type="int">
+                <constraints nullable="false" notNullConstraintName="weather_type_id_nn" />
+            </column>
+            <column name="temperature" type="double precision">
+                <constraints nullable="false" notNullConstraintName="temperature_nn" />
+            </column>
+            <column name="date_time" type="timestamp">
+                <constraints nullable="false" notNullConstraintName="date_time_nn" />
+            </column>
+        </createTable>
+        <createTable tableName="weather_type">
+            <column name="id" type="int">
+                <constraints primaryKey="true" primaryKeyName="weather_typ_id_pk" />
+            </column>
+            <column name="day_description" type="varchar(50)"> </column>
+            <column name="night_description" type="varchar(50)"> </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="weather_observation"
+                                 baseColumnNames="weather_type_id"
+                                 constraintName="weather_type_id_fk"
+                                 referencedTableName="weather_type"
+                                 referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="weather_observation"
+                                 baseColumnNames="city_id"
+                                 constraintName="city_id_fk"
+                                 referencedTableName="city"
+                                 referencedColumnNames="id" />
+        <addUniqueConstraint tableName="city" columnNames="name"/>
+        <createIndex tableName="city" indexName="city_id_index">
+            <column name="id"/>
+        </createIndex>
+        <createIndex tableName="city" indexName="city_name_index">
+            <column name="name"/>
+        </createIndex>
+        <createIndex tableName="weather_observation" indexName="weather_observation_id_index">
+            <column name="id"/>
+        </createIndex>
+        <createIndex tableName="weather_observation" indexName="weather_observation_city_id_index">
+            <column name="city_id"/>
+        </createIndex>
+        <createIndex tableName="weather_observation" indexName="weather_observation_weather_type_id_index">
+            <column name="weather_type_id"/>
+        </createIndex>
+        <createIndex tableName="weather_observation" indexName="weather_observation_temperature_index">
+            <column name="temperature"/>
+        </createIndex>
+        <createIndex tableName="weather_observation" indexName="weather_observation_city_id_and_weather_type_id_index">
+            <column name="city_id"/>
+            <column name="weather_type_id"/>
+        </createIndex>
+        <createIndex tableName="weather_observation" indexName="weather_observation_city_id_and_date_time_index">
+            <column name="city_id"/>
+            <column name="date_time"/>
+        </createIndex>
+        <createIndex tableName="weather_type" indexName="weather_type_id_index">
+            <column name="id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

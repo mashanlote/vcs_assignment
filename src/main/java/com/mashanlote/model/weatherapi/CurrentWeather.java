@@ -1,6 +1,8 @@
-package com.mashanlote.model;
+package com.mashanlote.model.weatherapi;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.mashanlote.model.weatherapi.Condition;
+
 import java.time.LocalDateTime;
 
 public record CurrentWeather(

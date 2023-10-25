@@ -1,17 +1,13 @@
-package com.mashanlote;
+package com.mashanlote.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mashanlote.model.ApiError;
+import com.mashanlote.model.weatherapi.ApiError;
 import com.mashanlote.model.exceptions.AuthorizationException;
 import com.mashanlote.model.exceptions.BadRequestException;
 import com.mashanlote.model.exceptions.NotFoundException;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResponseErrorHandler;
 
 import javax.security.sasl.AuthenticationException;

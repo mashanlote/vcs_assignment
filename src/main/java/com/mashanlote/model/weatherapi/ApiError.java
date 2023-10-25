@@ -1,4 +1,4 @@
-package com.mashanlote.model;
+package com.mashanlote.model.weatherapi;
 
 public record ApiError(ApiErrorInternal error) { }
 
