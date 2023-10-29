@@ -8,7 +8,6 @@ import com.mashanlote.model.exceptions.InternalServerErrorException;
 import com.mashanlote.model.exceptions.NotFoundException;
 import com.mashanlote.model.weatherapi.WeatherDTO;
 import com.mashanlote.repositories.CityRepository;
-import com.zaxxer.hikari.HikariDataSource;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -83,7 +82,7 @@ public class WeatherApiService {
         return weatherApi.getForObject(URL, WeatherDTO.class, city);
     }
 
-    private WeatherObservation saveWeatherObservation(WeatherDTO weather) {
+    public WeatherObservation saveWeatherObservation(WeatherDTO weather) {
         if (weather == null) throw new BadRequestException();
         var cityName = weather.location().name();
         var condition = weather.current().condition();

@@ -14,12 +14,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest
 @ExtendWith(SpringExtension.class)
 @TestPropertySource(locations = "classpath:test.properties")
-public class WeatherApiIntegrationTests {
+public class WeatherApiStubbedTests {
 
     @MockBean
     private RestTemplate restTemplateMock;
@@ -27,6 +26,7 @@ public class WeatherApiIntegrationTests {
     @Autowired
     private WeatherApiService weatherApiService;
 
+    // Проверяем, что метод запроса внешнего ресурса вообще вызывается
     @Test
     public void CallExternalApiTest() {
         var city = "Tomsk";
@@ -40,6 +40,7 @@ public class WeatherApiIntegrationTests {
         Assertions.assertThat(result).isInstanceOf(WeatherDTO.class);
         Assertions.assertThat(result).hasFieldOrProperty("current");
     }
+
 
 }
 
