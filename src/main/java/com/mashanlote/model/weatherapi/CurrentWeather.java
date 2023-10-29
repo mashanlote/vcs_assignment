@@ -2,9 +2,11 @@ package com.mashanlote.model.weatherapi;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mashanlote.model.weatherapi.Condition;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
+@Builder
 public record CurrentWeather(
     Integer cloud,
     Condition condition,

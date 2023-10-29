@@ -25,6 +25,15 @@ dependencies {
     implementation("org.projectlombok:lombok:1.18.28")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.1.4")
     implementation("org.springframework.boot:spring-boot-starter-jdbc:3.1.4")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers:3.1.4")
+    testImplementation("org.testcontainers:junit-jupiter:1.19.1")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.4")
+    testImplementation("org.assertj:assertj-core:3.6.1")
     compileOnly("org.projectlombok:lombok:1.18.28")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
     implementation("org.springframework.boot:spring-boot-starter-web:3.1.4")
@@ -36,4 +45,8 @@ dependencies {
     runtimeOnly("com.h2database:h2:2.2.224")
     liquibaseRuntime("org.liquibase:liquibase-core:4.24.0")
     runtimeOnly("org.liquibase:liquibase-core:4.24.0")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
