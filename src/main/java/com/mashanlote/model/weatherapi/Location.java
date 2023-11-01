@@ -1,9 +1,11 @@
 package com.mashanlote.model.weatherapi;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
+@Builder
 public record Location(
         String country,
         Double lat,

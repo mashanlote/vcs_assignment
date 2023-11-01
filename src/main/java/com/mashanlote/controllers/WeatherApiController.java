@@ -1,8 +1,9 @@
 package com.mashanlote.controllers;
 
+import com.mashanlote.model.entities.WeatherObservation;
 import com.mashanlote.services.WeatherApiService;
-import com.mashanlote.model.weatherapi.WeatherDTO;
-import io.github.resilience4j.core.lang.Nullable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +21,12 @@ public class WeatherApiController {
 
     // Данная ручка идёт в API и добавляет данные в БД, если они отсутствуют в БД; используется JDBC
     @GetMapping("/cities/{city}/update")
-    public ResponseEntity<?> fetchWeatherAndStoreInDb(@PathVariable String city) {
+    public ResponseEntity<WeatherObservation> fetchWeatherAndStoreInDb(@PathVariable String city) {
         var weather = weatherService.fetchWeatherAndStoreInDb(city);
-        return ResponseEntity.ok(weather);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(weather);
     }
 
     // Данная ручка возвращает последние 10 наблюдений для конкретного города. Использует дефолтную аннотацию
@@ -36,7 +40,7 @@ public class WeatherApiController {
 
     // Данная ручка возвращает текущую погоду для города, использует @Transaction с JdbcTemplate
     @GetMapping("/cities/{city}/current")
-    public ResponseEntity<?> getMostRecentWeatherObservations(@PathVariable String city) {
+    public ResponseEntity<?> getCurrentWeather(@PathVariable String city) {
         var weather = weatherService.getMostRecentObservation(city);
         return ResponseEntity.ok(weather);
     }
@@ -50,7 +54,7 @@ public class WeatherApiController {
 
     // Данная ручка выдает список городов, использует PlatformTransactionManager
     @GetMapping(value = {"/cities/", "/cities"})
-    public ResponseEntity<?> getWarmestWeatherForCity() {
+    public ResponseEntity<?> getCityList() {
         var weather = weatherService.getCityList();
         return ResponseEntity.ok(weather);
     }

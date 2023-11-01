@@ -8,7 +8,6 @@ import com.mashanlote.model.exceptions.InternalServerErrorException;
 import com.mashanlote.model.exceptions.NotFoundException;
 import com.mashanlote.model.weatherapi.WeatherDTO;
 import com.mashanlote.repositories.CityRepository;
-import com.zaxxer.hikari.HikariDataSource;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +20,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.client.RestTemplate;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -44,7 +44,7 @@ public class WeatherApiService {
             "(id, city_id, weather_type_id, temperature, date_time) values (?, ?, ?, ?, ?)";
     private final static String DELETE_WEATHER_OBSERVATION_BY_ID = "DELETE FROM weather_observation WHERE id=?";
 
-    private final HikariDataSource dataSource;
+    private final DataSource dataSource;
     private final String URL;
     private final CityRepository cityRepository;
     private final JdbcTemplate jdbcTemplate;
@@ -55,7 +55,7 @@ public class WeatherApiService {
     RestTemplate weatherApi;
 
     public WeatherApiService(
-            HikariDataSource dataSource,
+            DataSource dataSource,
             RestTemplate weatherApi,
             @Value("${api-key}") String apiKey,
             CityRepository cityRepository,
@@ -73,11 +73,16 @@ public class WeatherApiService {
 
     @RateLimiter(name = "api")
     public WeatherObservation fetchWeatherAndStoreInDb(String city) {
-        var weather = weatherApi.getForObject(URL, WeatherDTO.class, city);
+        var weather = fetchWeatherFromExternalApi(city);
         return saveWeatherObservation(weather);
     }
 
-    private WeatherObservation saveWeatherObservation(WeatherDTO weather) {
+    // @VisibleForTesting
+    public WeatherDTO fetchWeatherFromExternalApi(String city) {
+        return weatherApi.getForObject(URL, WeatherDTO.class, city);
+    }
+
+    public WeatherObservation saveWeatherObservation(WeatherDTO weather) {
         if (weather == null) throw new BadRequestException();
         var cityName = weather.location().name();
         var condition = weather.current().condition();
