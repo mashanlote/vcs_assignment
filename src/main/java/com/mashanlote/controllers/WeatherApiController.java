@@ -21,8 +21,8 @@ public class WeatherApiController {
 
     // Данная ручка идёт в API и добавляет данные в БД, если они отсутствуют в БД; используется JDBC
     @GetMapping("/cities/{city}/update")
-    public ResponseEntity<WeatherObservation> fetchWeatherAndStoreInDb(@PathVariable String city) {
-        var weather = weatherService.fetchWeatherAndStoreInDb(city);
+    public ResponseEntity<WeatherObservation> updateWeatherIfNecessary(@PathVariable String city) {
+        var weather = weatherService.updateWeatherIfNecessary(city);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

@@ -72,7 +72,7 @@ public class WeatherApiService {
     }
 
     @RateLimiter(name = "api")
-    public WeatherObservation fetchWeatherAndStoreInDb(String city) {
+    public WeatherObservation updateWeatherIfNecessary(String city) {
         var weather = fetchWeatherFromExternalApi(city);
         return saveWeatherObservation(weather);
     }

@@ -35,6 +35,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.4")
     testImplementation("org.assertj:assertj-core:3.6.1")
     implementation("org.liquibase:liquibase-core:4.24.0")
+    implementation("org.springframework.boot:spring-boot-starter-security:3.1.4")
     compileOnly("org.projectlombok:lombok:1.18.28")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
     implementation("org.springframework.boot:spring-boot-starter-web:3.1.4")
