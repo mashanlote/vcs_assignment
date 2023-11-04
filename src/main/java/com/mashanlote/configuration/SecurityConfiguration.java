@@ -31,14 +31,14 @@ public class SecurityConfiguration {
         MvcRequestMatcher.Builder mvcRequestMatcher = new MvcRequestMatcher.Builder(introspector);
         return http
                 .authorizeHttpRequests(requests -> requests
-//                                .requestMatchers(PathRequest.toH2Console()).permitAll()
-//                                .requestMatchers(HttpMethod.POST, "/register").permitAll()
-                                .requestMatchers(mvcRequestMatcher.pattern(HttpMethod.POST, "/register")).anonymous()
+//                                .requestMatchers(PathRequest.toH2Console()).permitAll() // Used for debugging
+                                .requestMatchers(HttpMethod.POST, "/register").permitAll()
+                                .requestMatchers(mvcRequestMatcher.pattern(HttpMethod.POST, "/register")).permitAll()
+                                .requestMatchers(mvcRequestMatcher.pattern(HttpMethod.GET, "/**")).hasAnyAuthority("ADMIN", "USER")
+                                .requestMatchers(mvcRequestMatcher.pattern(HttpMethod.POST, "/**")).hasAnyAuthority("ADMIN")
+                                .requestMatchers(mvcRequestMatcher.pattern(HttpMethod.DELETE, "/**")).hasAnyAuthority("ADMIN")
+                                .requestMatchers(mvcRequestMatcher.pattern(HttpMethod.PUT, "/**")).hasAnyAuthority("ADMIN")
                                 .anyRequest().authenticated()
-//                                .requestMatchers(mvcRequestMatcher.pattern(HttpMethod.GET, "/**")).hasAnyAuthority("ADMIN", "USER")
-//                                .requestMatchers(mvcRequestMatcher.pattern(HttpMethod.POST, "/**")).hasAnyAuthority("ADMIN")
-//                                .requestMatchers(mvcRequestMatcher.pattern(HttpMethod.DELETE, "/**")).hasAnyAuthority("ADMIN")
-//                                .requestMatchers(mvcRequestMatcher.pattern(HttpMethod.PUT, "/**")).hasAnyAuthority("ADMIN")
                 )
                 .httpBasic(withDefaults())
                 .userDetailsService(service)
