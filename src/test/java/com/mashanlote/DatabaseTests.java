@@ -81,6 +81,7 @@ public class DatabaseTests {
                 cityRepository,
                 jdbcTemplate,
                 null,
+                null,
                 null
         );
     }
