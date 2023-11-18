@@ -36,5 +36,14 @@
                   tableName="weather_observation"
                   usePreparedStatements="true">
         </loadData>
+        <loadData encoding="UTF-8"
+                  file="../init/users.csv"
+                  quotchar="'"
+                  relativeToChangelogFile="true"
+                  schemaName="public"
+                  separator=","
+                  tableName="users"
+                  usePreparedStatements="true">
+        </loadData>
     </changeSet>
 </databaseChangeLog>

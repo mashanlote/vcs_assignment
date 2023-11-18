@@ -1,9 +1,7 @@
 package com.mashanlote;
 
-import com.mashanlote.model.entities.WeatherObservation;
 import com.mashanlote.model.weatherapi.WeatherDTO;
 import com.mashanlote.services.WeatherApiService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,7 +35,7 @@ public class SpiedTest {
                 .fetchWeatherFromExternalApi(anyString());
         doReturn(weatherObservation1).when(weatherApiServiceSpy)
                 .saveWeatherObservation(any(WeatherDTO.class));
-        weatherApiServiceSpy.fetchWeatherAndStoreInDb("Tomsk");
+        weatherApiServiceSpy.updateWeatherIfNecessary("Tomsk");
         verify(weatherApiServiceSpy).fetchWeatherFromExternalApi("Tomsk");
         verify(weatherApiServiceSpy).saveWeatherObservation(any(WeatherDTO.class));
     }

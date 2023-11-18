@@ -40,6 +40,16 @@
             <column name="day_description" type="varchar(50)"> </column>
             <column name="night_description" type="varchar(50)"> </column>
         </createTable>
+        <createTable tableName="users">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="user_id_pk" />
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints/>
+            </column>
+            <column name="password" type="varchar(64)"/>
+            <column name="role" type="varchar(5)"/>
+        </createTable>
         <addForeignKeyConstraint baseTableName="weather_observation"
                                  baseColumnNames="weather_type_id"
                                  constraintName="weather_type_id_fk"

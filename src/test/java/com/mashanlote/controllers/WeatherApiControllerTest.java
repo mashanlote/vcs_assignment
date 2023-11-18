@@ -36,7 +36,7 @@ public class WeatherApiControllerTest {
 
     @Test
     public void fetchFromExternalApi() throws Exception {
-        when(weatherApiService.fetchWeatherAndStoreInDb("Tomsk"))
+        when(weatherApiService.updateWeatherIfNecessary("Tomsk"))
                         .thenReturn(weatherObservations.get(0));
 
         mockMvc.perform(get("/weather/cities/Tomsk/update"))
@@ -49,7 +49,7 @@ public class WeatherApiControllerTest {
     // Отрицательный сценарий
     @Test
     public void fetchFromExternalApi_CityDoesNotExist() throws Exception {
-        when(weatherApiService.fetchWeatherAndStoreInDb("IDONTEXIST"))
+        when(weatherApiService.updateWeatherIfNecessary("IDONTEXIST"))
                 .thenThrow(NotFoundException.class);
 
         mockMvc.perform(get("/weather/cities/IDONTEXIST/update"))
