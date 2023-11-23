@@ -2,6 +2,7 @@ package com.mashanlote;
 
 import com.mashanlote.model.weatherapi.WeatherDTO;
 import com.mashanlote.services.WeatherApiService;
+import com.mashanlote.services.WeatherCache;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,7 +29,8 @@ public class SpiedTest {
                 null,
                 null,
                 null,
-                null
+                null,
+                new WeatherCache(5, 30)
         );
         WeatherApiService weatherApiServiceSpy = spy(weatherApiService);
         doReturn(weatherDTO1).when(weatherApiServiceSpy)

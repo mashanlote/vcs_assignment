@@ -50,6 +50,7 @@ public class WeatherApiService {
     private final JdbcTemplate jdbcTemplate;
     private final TransactionTemplate transactionTemplate;
     private final PlatformTransactionManager transactionManager;
+    private final WeatherCache weatherCache;
 
     @Qualifier("weather")
     RestTemplate weatherApi;
@@ -61,7 +62,9 @@ public class WeatherApiService {
             CityRepository cityRepository,
             JdbcTemplate jdbcTemplate,
             TransactionTemplate transactionTemplate,
-            PlatformTransactionManager transactionManager) {
+            PlatformTransactionManager transactionManager,
+            WeatherCache weatherCache
+    ) {
         this.dataSource = dataSource;
         this.weatherApi = weatherApi;
         this.URL = "/current.json?key=" + apiKey + "&q={city}";
@@ -69,10 +72,12 @@ public class WeatherApiService {
         this.jdbcTemplate = jdbcTemplate;
         this.transactionTemplate = transactionTemplate;
         this.transactionManager = transactionManager;
+        this.weatherCache = weatherCache;
     }
 
     @RateLimiter(name = "api")
     public WeatherObservation updateWeatherIfNecessary(String city) {
+        weatherCache.invalidateObservation(city);
         var weather = fetchWeatherFromExternalApi(city);
         return saveWeatherObservation(weather);
     }
@@ -184,13 +189,17 @@ public class WeatherApiService {
 
     @Transactional
     public WeatherObservation getMostRecentObservation(String cityName) {
+        var cachedObservation = weatherCache.get(cityName);
+        if (cachedObservation.isPresent()) {
+            return cachedObservation.get();
+        }
         var city = jdbcTemplate.queryForObject(FIND_CITY_BY_NAME,
                 (rs, rn) -> City.builder()
                         .name(rs.getString("name"))
                         .id(UUID.fromString(rs.getString("id")))
                         .build(),
                 cityName);
-        return jdbcTemplate.queryForObject(
+        var observation = jdbcTemplate.queryForObject(
                 "SELECT * FROM weather_observation" +
                         " LEFT JOIN weather_type ON weather_observation.weather_type_id = weather_type.id" +
                         " WHERE city_id=?" +
@@ -207,6 +216,8 @@ public class WeatherApiService {
                                 .build()
                         ).build(),
                 city.getId());
+        weatherCache.put(cityName, observation);
+        return observation;
     }
 
     public void deleteObservation(UUID id) {
