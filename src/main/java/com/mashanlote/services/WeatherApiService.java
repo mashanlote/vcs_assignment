@@ -82,6 +82,11 @@ public class WeatherApiService {
         return saveWeatherObservation(weather);
     }
 
+    public void saveWeatherForCity(String city) {
+        var weather = fetchWeatherFromExternalApi(city);
+        saveWeatherObservation(weather);
+    }
+
     // @VisibleForTesting
     public WeatherDTO fetchWeatherFromExternalApi(String city) {
         return weatherApi.getForObject(URL, WeatherDTO.class, city);
@@ -184,7 +189,7 @@ public class WeatherApiService {
         if (city.isEmpty()) throw new NotFoundException();
         return city.get().getWeatherObservations().stream()
                 .sorted(Comparator.comparing(WeatherObservation::getDateTime))
-                .limit(10).toList();
+                .limit(limit).toList();
     }
 
     @Transactional

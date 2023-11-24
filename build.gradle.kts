@@ -25,6 +25,7 @@ dependencies {
     implementation("org.projectlombok:lombok:1.18.28")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.1.4")
     implementation("org.springframework.boot:spring-boot-starter-jdbc:3.1.4")
+    implementation("org.springframework.kafka:spring-kafka:3.0.9")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
